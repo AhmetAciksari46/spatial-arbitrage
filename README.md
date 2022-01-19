@@ -1,5 +1,9 @@
 # spatial-arbitrage
 spatial arbitrage bot using python,
+requirements
+python 3.9
+requests library -> write (pip3 install requests) on command promt. *i will add information for other OS users.
+
 
 Search price differences at the different markets. For now only supporting GateIO and MXC
 
