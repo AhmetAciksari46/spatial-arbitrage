@@ -1,0 +1,48 @@
+import time
+import requests
+
+
+def mxcCoinPrice(coinName):
+    ROOT_URL = 'https://www.mexc.com'
+    coinName = coinName +"_USDT"
+    method = 'GET'
+    path = '/open/api/v2/market/ticker'
+    url = '{}{}'.format(ROOT_URL, path)
+    params = {
+        'symbol': coinName,
+    }
+    response = requests.request(method, url, params=params)
+    ask = response.json()['data'][0]['ask']
+    bid = response.json()['data'][0]['bid']
+    return float(ask),float(bid)
+
+
+def gateio(coinName):
+    coinName= coinName +"_USDT"
+    r = requests.request('GET', "https://api.gateio.ws/api/v4/spot/order_book?currency_pair="+ coinName)
+    message = r.json()
+    ask=message['asks'][0][0]
+    askamount = message['asks'][0][1]
+    bid =message['bids'][0][0]
+    bidamount = message['asks'][0][1]
+    return float(bid),float(bidamount),float(ask),float(askamount)
+
+
+
+
+coinlist = ['XRP','XLM']
+totalUSDT= 1000.0
+while True:
+    for i in range(len(coinlist)):
+        time.sleep(1)
+        mxcSellPrice,mxcBuyPrice = mxcCoinPrice(coinlist[i])
+        gateioBuyPrice,gateioBuyAmount,gateioSellPrice,gateioSellAmount = gateio(coinlist[i])
+        #option1 buy from mxc sell at gateio
+        amountopt1 =totalUSDT/mxcSellPrice
+        lastUsdtopt1 = amountopt1 * gateioBuyPrice
+        print(coinlist[i]+" option1 :" + str(lastUsdtopt1))
+        #option2 buy from gateio sell at mxc
+        amountopt2 =totalUSDT/gateioSellPrice
+        lastUsdtopt2 = amountopt2 * mxcBuyPrice
+        print(coinlist[i]+" option2 :" + str(lastUsdtopt2))
+
